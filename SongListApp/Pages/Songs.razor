@@ -1,0 +1,52 @@
+<h3>Songs</h3>
+
+@page "/songs"
+@inject SongService songService
+<h1>My Song List</h1>
+<p>This component demonstrates managing a Song list.</p>
+@if (songs == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <button @onclick="@Add" class="btn btn-success">Add</button>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Title</th>
+            <th>Artist</th>
+            <th>Date</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in songs)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Title</td>
+                <td>@item.Artist</td>
+                <td>@item.Year</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+@code {
+    string id;
+    string title;
+    string artist;
+    string year;
+    private enum MODE {None, Add, EditDelete};
+    MODE mode = MODE.None;
+    List<Song> songs;
+    protected override async Task OnInitializedAsync()
+    {
+        await Load();
+    }
+    protected async Task Load()
+    {
+        songs = await songService.GetSongsAsync();
+    }
+}
