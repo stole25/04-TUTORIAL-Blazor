@@ -33,6 +33,16 @@ else
         </tbody>
     </table>
 }
+@if (songs != null && mode == MODE.Add)
+{
+    <input placeholder="Title" @bind="@title" />
+    <br />
+    <input placeholder="Artist" @bind="@artist" />
+    <br />
+    <input placeholder="Year" @bind="@year" />
+    <br />
+    <button @onclick="@Insert" class="btn btn-warning">Insert</button>
+    
 @code {
     string id;
     string title;
@@ -48,5 +58,31 @@ else
     protected async Task Load()
     {
         songs = await songService.GetSongsAsync();
+    }
+    protected void Add()
+    {
+        ClearFields();
+        mode = MODE.Add;
+    }
+    protected void ClearFields()
+    {
+        id = string.Empty;
+        title = string.Empty;
+        artist = string.Empty;
+        year = string.Empty;
+    }
+    protected async Task Insert()
+    {
+        Song s = new Song()
+        {
+            Id = Guid.NewGuid().ToString(),
+            Title = title,
+            Artist = artist,
+            Year = year
+        };
+        await songService.InsertSongAsync(s);
+        ClearFields();
+        await Load();
+        mode = MODE.None;
     }
 }
